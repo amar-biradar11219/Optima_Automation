@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.service import Service
 
 from pages.login_page import LoginPage
 from utilities.read_excel import Utils
-testdata =Utils.read_data_from_excel("testdata/usercradentials.xlsx",)
+testdata =Utils.read_data_from_excel("testdata/usercradentials.xlsx","Cradentials")
 
 @pytest.fixture(scope="session",params=testdata)
 def setup(request):
@@ -18,6 +18,7 @@ def setup(request):
     # driver.maximize_window()
     options = Options()
     options.add_argument("--log-level=3")
+    # options.add_argument("--headless")
     username, password = request.param
     driver = webdriver.Chrome(service=Service(), options=options)
     driver.maximize_window()
