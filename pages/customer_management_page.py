@@ -3,18 +3,17 @@ import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from base.base_page import BasePage
-from utilities.read_excel import Utils
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import ( NoSuchElementException,TimeoutException,ElementClickInterceptedException,ElementNotInteractableException,StaleElementReferenceException,WebDriverException)
 
 
-class CustomerManagementPage(BasePage):
+
+class CustomerManagementPage:
     def __init__(self, driver):
-        super().__init__(driver)
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
-        self.logger = logging.getLogger(__name__)
-
+        self.wait = WebDriverWait(self.driver, 10)
+        # self.wait = WebDriverWait(driver, 10)
 
     # Locators
     MENU = (By.XPATH, "//i[@class='bx bx-grid-alt bx-sm pt-1']")
@@ -33,34 +32,46 @@ class CustomerManagementPage(BasePage):
     CONTACT_PHONE = (By.XPATH, "//input[@formcontrolname='contactPhone']")
     ADD_BUTTON = (By.XPATH, "//button[text()='Add']")
     CANCEL_BUTTON = (By.XPATH, "//button[text()='Cancel']")
+    DROPDOWN_SEARCH = (By.XPATH,"//select[@id='mat-input-1']")
+    SEARCH_INPUT = (By.XPATH,"//div[@class='filter-grid ng-star-inserted']//div[@class='search-text position-relative']//input[@class='form-control search-input mb-1 ng-untouched ng-pristine ng-valid']")
+
     def navigate_to_customer_management(self):
-        self.logger.info("Navigating to Customer Management")
-        self.wait_and_click(self.MENU)
-        self.wait_and_click(self.CUSTOMER_MANAGEMENT)
+        time.sleep(5)
+        self.driver.find_element(*self.MENU).click()
+        self.driver.find_element(*self.CUSTOMER_MANAGEMENT).click()
+        print("Navigated to Customer Management page successfully.")
+        time.sleep(2)
+
+    def create_customer(self, test_data):
+        self.navigate_to_customer_management()
+        self.driver.find_element(*self.ADD_NEW_BUTTON).click()
+        time.sleep(2)
+        # Fill in customer detail
+        self.driver.find_element(*self.CUSTOMER_NAME).send_keys(test_data[0])
+        self.driver.find_element(*self.PARENT_COMPANY).send_keys(test_data[1])
+        self.driver.find_element(*self.ADDRESS).send_keys(test_data[2])
+        self.driver.find_element(*self.DEPARTMENT).send_keys(test_data[3])
+        self.driver.find_element(*self.SUBSIDIARY).send_keys(test_data[4])
+        self.driver.find_element(*self.LOCATION).send_keys(test_data[5])
+        self.driver.find_element(*self.PHONE_NUMBER).send_keys(test_data[6])
+        self.driver.find_element(*self.EMAIL_ADDRESS).send_keys(test_data[7])
+        self.driver.find_element(*self.COMMENTS).send_keys(test_data[8])
+        self.driver.find_element(*self.CONTACT_NAME).send_keys(test_data[9])
+        print("Customer details filled in successfully.")
+
+    def search_parameter(self,testdata):
+        try:
+        # Navigate to Customer Management page
+            self.navigate_to_customer_management()
+            print("Navigated to Customer Management page for search parameter.")
+            dropdown = self.driver.find_element(*self.DROPDOWN_SEARCH)
+            select = Select(dropdown)
+            select.select_by_value("customerName")
+            input_value=self.wait.until(EC.presence_of_element_located(self.SEARCH_INPUT))
+            input_value.send_keys(testdata[0])
+            print("Search parameter filled in successfully.",testdata[0])
+            time.sleep(5)
+        except  ElementNotInteractableException as e:
+            print("Element not found:", e)
 
 
-
-    # createdCustomerTestData= Utils.read_data_from_excel("testdata/usercradentials.xlsx","Customer data")
-    # @pytest.mark.parametrize("testdata", createdCustomerTestData)
-    def create_Customer(self, customer_data):
-        """
-        Create a new customer using provided customer data dictionary
-        """
-        self.logger.info(f"Creating new customer: {customer_data['customer_name']}")
-
-        self.wait_and_click(self.MENU)
-        self.wait_and_click(self.ADD_NEW_BUTTON)
-
-        # Fill in customer details
-        self.wait_and_send_keys(self.CUSTOMER_NAME, customer_data['customer_name'])
-        self.wait_and_send_keys(self.PARENT_COMPANY, customer_data['Parent_company'])
-        self.wait_and_send_keys(self.ADDRESS, customer_data['address'])
-        self.wait_and_send_keys(self.DEPARTMENT, customer_data['department'])
-        self.wait_and_send_keys(self.SUBSIDIARY, customer_data['subsidiary'])
-        self.wait_and_send_keys(self.LOCATION, customer_data['location'])
-        self.wait_and_send_keys(self.PHONE_NUMBER, customer_data['phone_number'])
-        self.wait_and_send_keys(self.EMAIL_ADDRESS, customer_data['email_addres'])
-        self.wait_and_send_keys(self.COMMENTS, customer_data['comments'])
-        self.wait_and_send_keys(self.CONTACT_NAME, customer_data['contact_name'])
-
-        self.logger.info("Customer details entered successfully")

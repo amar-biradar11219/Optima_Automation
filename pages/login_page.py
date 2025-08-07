@@ -13,9 +13,9 @@ class LoginPage:
     LOGIN_BUTTON = (By.XPATH, "//div[@class='mb-3 d-grid']")
     LOGOUT_LINK = (By.XPATH, "//a[@href='/logout']")
 
+
     def login(self, username, password):
         self.driver.find_element(*self.USERNAME_INPUT).send_keys(username)
-
         self.driver.find_element(*self.PASSWORD_INPUT).send_keys(password)
         self.driver.find_element(*self.REMEMBER_ME_CHECKBOX).click()
         self.driver.find_element(*self.LOGIN_BUTTON).click()
