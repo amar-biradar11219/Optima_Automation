@@ -3,7 +3,7 @@ import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from base.base_page import BasePage
+from ..base.base_page import BasePage
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import ( NoSuchElementException,TimeoutException,ElementClickInterceptedException,ElementNotInteractableException,StaleElementReferenceException,WebDriverException)
 

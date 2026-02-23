@@ -3,10 +3,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
-from pages.login_page import LoginPage
-from utilities.read_excel import Utils
+from ..pages.login_page import LoginPage
+from ..utilities.read_excel import Utils
 
-testdata = Utils.read_data_from_excel("testdata/usercradentials.xlsx", "Cradentials")
+filename = 'Optima_Automation/testdata/usercradentials.xlsx'
+
+testdata = Utils.read_data_from_excel(filename, "Cradentials")
 
 
 @pytest.fixture(scope="function", params=testdata)
@@ -20,7 +22,7 @@ def setup(request):
     # driver.maximize_window()
     options = Options()
     # options.add_argument("--log-level=3")
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
     username, password = request.param
     driver = webdriver.Chrome(service=Service(), options=options)
     driver.maximize_window()
